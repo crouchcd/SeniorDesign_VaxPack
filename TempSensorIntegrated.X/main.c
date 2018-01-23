@@ -101,7 +101,7 @@ bool updateTensPlace(int keyValue) {
         int onesPlace = userDesiredTemp % 10;
         if ((keyValue == 4 && onesPlace > 2) || (keyValue == 3 && onesPlace < 2)) {
             userDesiredTemp = keyValue * 10 + 2; // automatically set the ones place to 2 if
-                                                 // it would be out of range
+            // it would be out of range
         } else {
             userDesiredTemp = keyValue * 10 + onesPlace;
         }
