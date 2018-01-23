@@ -13,7 +13,7 @@ extern "C" {
 #endif
 
     char getCol_0_Keypress();
-    
+
     char getCol_1_Keypress();
 
     char getCol_2_Keypress();

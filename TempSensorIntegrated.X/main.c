@@ -37,7 +37,7 @@ int main(void) {
     int avgTemp;
 
     while (1) {
-        
+
         for (; count < 5; count++) {
             ADCvalue = ADC1_GetConversion(4);
             LCD_ClearCommand();
@@ -47,15 +47,15 @@ int main(void) {
             temp = temp - 10;
             temps[count] = temp;
         }
-        
+
         count = 0;
-        
+
         for (; count < 5; count++) {
             avgTemp += temps[count];
         }
-        
+
         avgTemp = avgTemp / 5;
-        
+
         actualTemp = avgTemp;
 
         displayData();
@@ -99,7 +99,12 @@ bool updateTensPlace(int keyValue) {
         errorMessage();
     } else {
         int onesPlace = userDesiredTemp % 10;
-        userDesiredTemp = keyValue * 10 + onesPlace;
+        if ((keyValue == 4 && onesPlace > 2) || (keyValue == 3 && onesPlace < 2)) {
+            userDesiredTemp = keyValue * 10 + 2; // automatically set the ones place to 2 if
+                                                 // it would be out of range
+        } else {
+            userDesiredTemp = keyValue * 10 + onesPlace;
+        }
         isUpdateSuccessful = true;
     }
     return isUpdateSuccessful;
