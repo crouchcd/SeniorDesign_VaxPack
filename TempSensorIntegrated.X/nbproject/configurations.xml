@@ -13,8 +13,8 @@
         <itemPath>mcc_generated_files/pin_manager.h</itemPath>
         <itemPath>mcc_generated_files/adc1.h</itemPath>
       </logicalFolder>
-      <itemPath>/Users/crouchcd/Desktop/SeniorDesign_VaxPack-master/KeypadIntegratedMainLogic/TempSensorIntegrated.X/KeypadHandler.h</itemPath>
-      <itemPath>/Users/crouchcd/Desktop/SeniorDesign_VaxPack-master/KeypadIntegratedMainLogic/TempSensorIntegrated.X/LCD.h</itemPath>
+      <itemPath>/Users/crouchcd/Desktop/SeniorDesign_VaxPack/TempSensorIntegrated.X/KeypadHandler.h</itemPath>
+      <itemPath>/Users/crouchcd/Desktop/SeniorDesign_VaxPack/TempSensorIntegrated.X/LCD.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
@@ -33,8 +33,8 @@
         <itemPath>mcc_generated_files/adc1.c</itemPath>
       </logicalFolder>
       <itemPath>main.c</itemPath>
-      <itemPath>/Users/crouchcd/Desktop/SeniorDesign_VaxPack-master/KeypadIntegratedMainLogic/TempSensorIntegrated.X/KeypadHandler.c</itemPath>
-      <itemPath>/Users/crouchcd/Desktop/SeniorDesign_VaxPack-master/KeypadIntegratedMainLogic/TempSensorIntegrated.X/LCD.c</itemPath>
+      <itemPath>/Users/crouchcd/Desktop/SeniorDesign_VaxPack/TempSensorIntegrated.X/KeypadHandler.c</itemPath>
+      <itemPath>/Users/crouchcd/Desktop/SeniorDesign_VaxPack/TempSensorIntegrated.X/LCD.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
