@@ -15,10 +15,10 @@
 /*
  Row pins set as general output pins (default HIGH)
  */
-// RA0 - ROW0 - keypad pin 2
-// RA1 - ROW1 - keypad pin 7
-// RA7 - ROW2 - keypad pin 6
-// RA10 - ROW3 - keypad pin 4
+// RB10 - ROW0 - keypad pin 2
+// RB11 - ROW1 - keypad pin 7
+// RB12 - ROW2 - keypad pin 6
+// RB13 - ROW3 - keypad pin 4
 
 char keypadArray[NUM_ROWS][NUM_COLS] = {
     {'1', '2', '3'},
@@ -27,10 +27,10 @@ char keypadArray[NUM_ROWS][NUM_COLS] = {
     {'*', '0', '#'}
 };
 
-#define ROW0 PORTAbits.RA0
-#define ROW1 PORTAbits.RA1
-#define ROW2 PORTAbits.RA7
-#define ROW3 PORTAbits.RA10
+#define ROW0 PORTBbits.RB10
+#define ROW1 PORTBbits.RB11
+#define ROW2 PORTBbits.RB12
+#define ROW3 PORTBbits.RB13
 
 #define COL0 PORTBbits.RB7
 #define COL1 PORTBbits.RB8

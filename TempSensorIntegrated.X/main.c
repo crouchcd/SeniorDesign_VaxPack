@@ -11,6 +11,7 @@ bool updateTensPlace(int keyValue);
 bool updateOnesPlace(int keyValue);
 void displayData();
 void errorMessage();
+void initializeKeypadRowPins();
 
 int actualTemp = 36;
 int batteryChargeStatus = 56;
@@ -23,24 +24,38 @@ int main(void) {
     SYSTEM_Initialize();
     LCD_Init();
     LCD_ClearCommand();
-    // initially set keypad row pins to HIGH
-    LATAbits.LATA0 = 1;
-    LATAbits.LATA1 = 1;
-    LATAbits.LATA7 = 1;
-    LATAbits.LATA10 = 1;
+    initializeKeypadRowPins();
     float ref = 3.305;
     int ADCvalue = 0;
     float Vout = 0.0;
 
     while (1) {
-        ADCvalue = ADC1_GetConversion(4);
+//        ADCvalue = ADC1_GetConversion(4);
         LCD_ClearCommand();
-        Vout = ADCvalue * (ref / 4096);
-        LCD_PrintFloat(Vout);
+//        Vout = ADCvalue * (ref / 4096);
+//        LCD_PrintFloat(Vout);
+        LCD_ClearCommand();
+        displayData();
         __delay_ms(500);
     }
 
     return -1;
+}
+
+void initializeKeypadRowPins() {
+    
+    /*
+     * Digital/Analog (ANSx) Output/Input (TRISx)
+     *  set in pin_manager.c
+     * TRISx: '0' = output
+     * ANSx: '0' = digital
+     */
+
+    // initially set keypad row pins to HIGH
+    LATBbits.LATB10 = 1;
+    LATBbits.LATB11 = 1;
+    LATBbits.LATB12 = 1;
+    LATBbits.LATB13 = 1;
 }
 
 void updateDisplayAfterKeypress(char keypress) {
