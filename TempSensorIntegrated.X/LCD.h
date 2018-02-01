@@ -18,6 +18,7 @@ extern "C" {
     void LCD_PrintString(char *str);
     void LCD_PrintChar(char ch);
     void LCD_PrintInteger(int num);
+    void LCD_PrintFloat(float num);
 
 #ifdef	__cplusplus
 }

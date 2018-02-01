@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <project>
-  <executable name="dist/default/debug/Keypad.X.debug.elf">
+  <executable name="dist/default/debug/TempSensorIntegrated.X.debug.elf">
     <memory name="data">
       <units>bytes</units>
       <length>8192</length>
@@ -11,8 +11,8 @@
     <memory name="program">
       <units>bytes</units>
       <length>131316</length>
-      <used>4950</used>
-      <free>126366</free>
+      <used>5331</used>
+      <free>125985</free>
     </memory>
   </executable>
 </project>

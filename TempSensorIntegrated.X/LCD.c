@@ -112,7 +112,42 @@ void LCD_PrintChar(char ch) {
 }
 
 void LCD_PrintInteger(int num) {
-    if (num / 100 >= 1) {
+    if (num / 1000 >= 1) {
+        switch (num / 1000) {
+            case 1:
+                LCD_PrintChar('1');
+                break;
+            case 2:
+                LCD_PrintChar('2');
+                break;
+            case 3:
+                LCD_PrintChar('3');
+                break;
+            case 4:
+                LCD_PrintChar('4');
+                break;
+            case 5:
+                LCD_PrintChar('5');
+                break;
+            case 6:
+                LCD_PrintChar('6');
+                break;
+            case 7:
+                LCD_PrintChar('7');
+                break;
+            case 8:
+                LCD_PrintChar('8');
+                break;
+            case 9:
+                LCD_PrintChar('9');
+                break;
+        }
+        if ((num / 100) % 10 == 0)
+            LCD_PrintChar('0');
+        if ((num / 10) % 100 == 0)
+            LCD_PrintChar('0');
+        LCD_PrintInteger(num % 1000);
+    } else if (num / 100 >= 1) {
         switch (num / 100) {
             case 1:
                 LCD_PrintChar('1');
@@ -212,5 +247,10 @@ void LCD_PrintInteger(int num) {
     }
 }
 
-
+void LCD_PrintFloat(float num) {
+    LCD_PrintInteger(num);
+    LCD_PrintChar('.');
+    int floatingPoint = ((num - (int)num) * 100);
+    LCD_PrintInteger(floatingPoint);
+}
 
