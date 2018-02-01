@@ -19,31 +19,35 @@ int userDesiredTemp = 37;
 bool isCursorInTensPlace = true;
 // Vdd curiosity board = 3.305V
 
+#define TempSensorCorrection 7
+
 int main(void) {
     // initialize the device
     SYSTEM_Initialize();
     LCD_Init();
     LCD_ClearCommand();
     initializeKeypadRowPins();
-    float ref = 3.305;
+    float ref = 1.72;
     int ADCvalue = 0;
     float Vout = 0.0;
 
     while (1) {
-//        ADCvalue = ADC1_GetConversion(4);
-        LCD_ClearCommand();
-//        Vout = ADCvalue * (ref / 4096);
-//        LCD_PrintFloat(Vout);
-        LCD_ClearCommand();
-        displayData();
+
+
+        ADCvalue = ADC1_GetConversion(4);
+        Vout = ADCvalue * (ref / 4096);
+        Vout = ((Vout / 0.01) - 50) * 1.8 + 32 + TempSensorCorrection;
+        LCD_PrintFloat(Vout);
+        LCD_PrintString("+F");
         __delay_ms(500);
+        LCD_ClearCommand();
     }
 
     return -1;
 }
 
 void initializeKeypadRowPins() {
-    
+
     /*
      * Digital/Analog (ANSx) Output/Input (TRISx)
      *  set in pin_manager.c

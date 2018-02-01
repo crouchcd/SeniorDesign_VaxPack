@@ -84,9 +84,9 @@ void ADC1_Initialize (void)
 
    AD1CON1 = 0x8400;
 
-    // CSCNA disabled; NVCFG0 AVSS; PVCFG AVDD; ALTS disabled; BUFM disabled; SMPI Generates interrupt after completion of every sample/conversion operation; OFFCAL disabled; BUFREGEN disabled; 
+    // CSCNA disabled; NVCFG0 VREF-; PVCFG VREF+; ALTS disabled; BUFM disabled; SMPI Generates interrupt after completion of every sample/conversion operation; OFFCAL disabled; BUFREGEN disabled; 
 
-   AD1CON2 = 0x0000;
+   AD1CON2 = 0x6000;
 
     // SAMC 0; EXTSAM disabled; PUMPEN disabled; ADRC FOSC/2; ADCS 0; 
 
