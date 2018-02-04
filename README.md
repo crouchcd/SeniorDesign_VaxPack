@@ -8,4 +8,4 @@ Current Items:
 3.  External Interrupt Demo
 4.  3x4 Keypad interfacing with PIC24
 5.  ADC code for reading a (16.8-13.5 V) battery supply and a MCP9700 temperature sensor
-..* Two external circuits for generating the appropriate reference voltages for each ADC channel
+	* Two external circuits for generating the appropriate reference voltages for each ADC channel
