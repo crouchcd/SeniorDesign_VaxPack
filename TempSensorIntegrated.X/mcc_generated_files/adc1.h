@@ -76,7 +76,8 @@
  */
 typedef enum 
 {
-    channel_AN4 =  0x4,
+    TempSensor4 =  0x4,
+    BatteryLevel5 =  0x5,
     ADC1_CHANNEL_CTMU_TEMPERATURE_SENSOR_INPUT =  0xD,
     ADC1_CHANNEL_CTMU =  0xE,
     ADC1_CHANNEL_VBG_2 =  0x1B,
@@ -84,7 +85,7 @@ typedef enum
     ADC1_CHANNEL_AVSS =  0x1D,
     ADC1_CHANNEL_AVDD =  0x1E,
     ADC1_CHANNEL_VBAT_2 =  0x1F,
-    ADC1_MAX_CHANNEL_COUNT = 8
+    ADC1_MAX_CHANNEL_COUNT = 9
 } ADC1_CHANNEL;
 
 /**

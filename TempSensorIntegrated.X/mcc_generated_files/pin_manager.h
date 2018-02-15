@@ -656,11 +656,11 @@
   @Example
     <code>
     // Set RB2 high (1)
-    channel_AN4_SetHigh();
+    TempSensor4_SetHigh();
     </code>
 
 */
-#define channel_AN4_SetHigh()          _LATB2 = 1
+#define TempSensor4_SetHigh()          _LATB2 = 1
 /**
   @Summary
     Sets the GPIO pin, RB2, low using LATB2.
@@ -680,11 +680,11 @@
   @Example
     <code>
     // Set RB2 low (0)
-    channel_AN4_SetLow();
+    TempSensor4_SetLow();
     </code>
 
 */
-#define channel_AN4_SetLow()           _LATB2 = 0
+#define TempSensor4_SetLow()           _LATB2 = 0
 /**
   @Summary
     Toggles the GPIO pin, RB2, using LATB2.
@@ -704,11 +704,11 @@
   @Example
     <code>
     // Toggle RB2
-    channel_AN4_Toggle();
+    TempSensor4_Toggle();
     </code>
 
 */
-#define channel_AN4_Toggle()           _LATB2 ^= 1
+#define TempSensor4_Toggle()           _LATB2 ^= 1
 /**
   @Summary
     Reads the value of the GPIO pin, RB2.
@@ -730,11 +730,11 @@
     uint16_t portValue;
 
     // Read RB2
-    postValue = channel_AN4_GetValue();
+    postValue = TempSensor4_GetValue();
     </code>
 
 */
-#define channel_AN4_GetValue()         _RB2
+#define TempSensor4_GetValue()         _RB2
 /**
   @Summary
     Configures the GPIO pin, RB2, as an input.
@@ -754,11 +754,11 @@
   @Example
     <code>
     // Sets the RB2 as an input
-    channel_AN4_SetDigitalInput();
+    TempSensor4_SetDigitalInput();
     </code>
 
 */
-#define channel_AN4_SetDigitalInput()  _TRISB2 = 1
+#define TempSensor4_SetDigitalInput()  _TRISB2 = 1
 /**
   @Summary
     Configures the GPIO pin, RB2, as an output.
@@ -778,11 +778,157 @@
   @Example
     <code>
     // Sets the RB2 as an output
-    channel_AN4_SetDigitalOutput();
+    TempSensor4_SetDigitalOutput();
     </code>
 
 */
-#define channel_AN4_SetDigitalOutput() _TRISB2 = 0
+#define TempSensor4_SetDigitalOutput() _TRISB2 = 0
+/**
+  @Summary
+    Sets the GPIO pin, RB3, high using LATB3.
+
+  @Description
+    Sets the GPIO pin, RB3, high using LATB3.
+
+  @Preconditions
+    The RB3 must be set to an output.
+
+  @Returns
+    None.
+
+  @Param
+    None.
+
+  @Example
+    <code>
+    // Set RB3 high (1)
+    BatteryLevel5_SetHigh();
+    </code>
+
+*/
+#define BatteryLevel5_SetHigh()          _LATB3 = 1
+/**
+  @Summary
+    Sets the GPIO pin, RB3, low using LATB3.
+
+  @Description
+    Sets the GPIO pin, RB3, low using LATB3.
+
+  @Preconditions
+    The RB3 must be set to an output.
+
+  @Returns
+    None.
+
+  @Param
+    None.
+
+  @Example
+    <code>
+    // Set RB3 low (0)
+    BatteryLevel5_SetLow();
+    </code>
+
+*/
+#define BatteryLevel5_SetLow()           _LATB3 = 0
+/**
+  @Summary
+    Toggles the GPIO pin, RB3, using LATB3.
+
+  @Description
+    Toggles the GPIO pin, RB3, using LATB3.
+
+  @Preconditions
+    The RB3 must be set to an output.
+
+  @Returns
+    None.
+
+  @Param
+    None.
+
+  @Example
+    <code>
+    // Toggle RB3
+    BatteryLevel5_Toggle();
+    </code>
+
+*/
+#define BatteryLevel5_Toggle()           _LATB3 ^= 1
+/**
+  @Summary
+    Reads the value of the GPIO pin, RB3.
+
+  @Description
+    Reads the value of the GPIO pin, RB3.
+
+  @Preconditions
+    None.
+
+  @Returns
+    None.
+
+  @Param
+    None.
+
+  @Example
+    <code>
+    uint16_t portValue;
+
+    // Read RB3
+    postValue = BatteryLevel5_GetValue();
+    </code>
+
+*/
+#define BatteryLevel5_GetValue()         _RB3
+/**
+  @Summary
+    Configures the GPIO pin, RB3, as an input.
+
+  @Description
+    Configures the GPIO pin, RB3, as an input.
+
+  @Preconditions
+    None.
+
+  @Returns
+    None.
+
+  @Param
+    None.
+
+  @Example
+    <code>
+    // Sets the RB3 as an input
+    BatteryLevel5_SetDigitalInput();
+    </code>
+
+*/
+#define BatteryLevel5_SetDigitalInput()  _TRISB3 = 1
+/**
+  @Summary
+    Configures the GPIO pin, RB3, as an output.
+
+  @Description
+    Configures the GPIO pin, RB3, as an output.
+
+  @Preconditions
+    None.
+
+  @Returns
+    None.
+
+  @Param
+    None.
+
+  @Example
+    <code>
+    // Sets the RB3 as an output
+    BatteryLevel5_SetDigitalOutput();
+    </code>
+
+*/
+#define BatteryLevel5_SetDigitalOutput() _TRISB3 = 0
 
 /**
     Section: Function Prototypes

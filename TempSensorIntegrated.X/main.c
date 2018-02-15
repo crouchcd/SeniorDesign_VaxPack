@@ -20,6 +20,10 @@ bool isCursorInTensPlace = true;
 // Vdd curiosity board = 3.305V
 
 #define TempSensorCorrection 7
+#define TEMPERATURE_CHANNEL 4
+#define BATTERY_CHANNEL 5
+#define SetADCForExternalReference() AD1CON2 = 0x6000; // for temperature
+#define SetADCForInternalReference() AD1CON2 = 0x0000; // for battery level
 
 int main(void) {
     // initialize the device
@@ -27,23 +31,45 @@ int main(void) {
     LCD_Init();
     LCD_ClearCommand();
     initializeKeypadRowPins();
-    float ref = 1.72;
+    initializeADCExternalReferenceVoltage();
+    float tempRef = 1.72;
+//    float batteryRef = 3.305;
     int ADCvalue = 0;
     float Vout = 0.0;
+    float batteryPercentage;
 
     while (1) {
 
+        SetADCForExternalReference();
+        // set output high to generate Temp reference voltage
+        LATBbits.LATB14 = 1;
+        ADCvalue = ADC1_GetConversion(TEMPERATURE_CHANNEL);
+        Vout = ADCvalue * (tempRef / 4096);
+        Vout = ((Vout / 0.01) - 50) * 1.8 + 32;
+        actualTemp = Vout;
+        LATBbits.LATB14 = 0;
 
-        ADCvalue = ADC1_GetConversion(4);
-        Vout = ADCvalue * (ref / 4096);
-        Vout = ((Vout / 0.01) - 50) * 1.8 + 32 + TempSensorCorrection;
-        LCD_PrintFloat(Vout);
-        LCD_PrintString("+F");
-        __delay_ms(500);
+        SetADCForInternalReference();
+        ADCvalue = ADC1_GetConversion(BATTERY_CHANNEL);
+        // To scale from 3.3 - 2.5 as 100% to 0% respectively,
+        // - OR 0x0FFF - x where x is the bit reading when power supply is at 13.5 V
+        // - take (ADCValue - x as defined above) * 100
+        batteryPercentage = (ADCvalue / (float) 0x0FFF) * 100;
+        batteryChargeStatus = batteryPercentage;
         LCD_ClearCommand();
+        displayData();
+        __delay_ms(1000);
     }
 
     return -1;
+}
+
+void initializeADCExternalReferenceVoltage() {
+    // init port 14 to be digital output for generating
+    // temperature reference 
+    TRISBbits.TRISB14 = 0;
+    ANSBbits.ANSB14 = 0;
+    LATBbits.LATB14 = 0;
 }
 
 void initializeKeypadRowPins() {
