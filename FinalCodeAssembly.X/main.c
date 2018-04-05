@@ -1,7 +1,7 @@
 #include "mcc_generated_files/mcc.h"
 #define FCY 4000000UL //FCY = FOSC / 2 unsigned long (UL) 
-// PC24FJ128GA204 = 8MHz internal oscillator
-// must be defined before importing <libpic30.h>
+/* PC24FJ128GA204 = 8MHz internal oscillator
+ * must be defined before importing <libpic30.h> */ 
 #include <libpic30.h>
 #include "LCD.h"
 #include "xc.h"
@@ -18,12 +18,18 @@ int batteryChargeStatus = 56;
 int userDesiredTemp = 37;
 bool isCursorInTensPlace = true;
 
-#define TempSensorCorrection 7
-#define TEMPERATURE_CHANNEL 4
-#define BATTERY_CHANNEL 5
+#define TEMPERATURE_CHANNEL 4 // RB2
+#define BATTERY_CHANNEL 5 // RB3
 #define SetADCForExternalReference() AD1CON2 = 0x6000; // for temperature
 #define SetADCForInternalReference() AD1CON2 = 0x0000; // for battery level
-#define ARRAY_SIZE 5
+#define ARRAY_SIZE 7
+#define TEMP_REF_HI 1.75
+#define TEMP_REF_LOW 0.1
+#define Vdd 3.118
+#define BAT_REF_HI 3.118 /* 100% battery charge level - look at Vscaled when supply is 16.8V
+                            should be as close to Vdd as possible */ 
+#define BAT_REF_LOW 2.6 // 0% battery charge level - look at Vscaled when supply is 14V
+#define TEMP_CORRECTION 3 // temp seems to be off by a few degrees
 
 int main(void) {
     // initialize the device
@@ -31,65 +37,54 @@ int main(void) {
     LCD_Init();
     LCD_ClearCommand();
     initializeKeypadRowPins();
-    //    initializeADCExternalReferenceVoltage();
-    float tempRef = 1.72;
-    //    float batteryRef = 3.305;
+    float tempRef = TEMP_REF_HI - TEMP_REF_LOW;
     int ADCvalue = 0;
     float Vout = 0.0;
     float batteryPercentage, batteryScaled;
     short counter = 0;
-    int temps[ARRAY_SIZE] = {0, 0, 0, 0, 0};
-    int battLevels[ARRAY_SIZE] = {0, 0, 0, 0, 0};
+    int temps[ARRAY_SIZE] = {0, 0, 0, 0, 0, 0, 0};
+    int battLevels[ARRAY_SIZE] = {0, 0, 0, 0, 0, 0, 0};
 
     while (1) {
 
         SetADCForExternalReference();
         ADCvalue = ADC1_GetConversion(TEMPERATURE_CHANNEL);
-        Vout = ADCvalue * (tempRef / 4096);
+        Vout = ADCvalue * (tempRef / 4095);
+        /*Vout is originally in centigrade, 50 is subtracted to
+         * get the reading as its centigrade value, then convert to F */ 
         Vout = ((Vout / 0.01) - 50) * 1.8 + 32;
         actualTemp = Vout;
 
         SetADCForInternalReference();
         ADCvalue = ADC1_GetConversion(BATTERY_CHANNEL);
-        //3.3 represents 100%, 2.7 represents 0%
-        // 3.3 - 2.7 = 0.6
-        batteryScaled = ADCvalue * (3.12 / 4095);
-        batteryPercentage = ((batteryScaled - 2.7) / 0.42) * 100;
+        batteryScaled = ADCvalue * (Vdd / 4095);
+        batteryPercentage = ((batteryScaled - BAT_REF_LOW) / (BAT_REF_HI - BAT_REF_LOW)) * 100;
         if (batteryPercentage < 0) batteryPercentage = 0;
         batteryChargeStatus = batteryPercentage;
 
         if (counter < ARRAY_SIZE) {
+            // add temp and battery readings to an array
             temps[counter] = actualTemp;
             battLevels[counter] = batteryChargeStatus;
             counter++;
             __delay_ms(100);
         }
         else {
-            short i = 0, j = 0;
+            // average temperatures and bat. levels
+            short i = 0;
             int tempSum = 0, battSum = 0;
             for (;i < ARRAY_SIZE; i++) {
                 tempSum += temps[i];
+                battSum += battLevels[i];
             }
-            for (;j < ARRAY_SIZE; j++) {
-                battSum += battLevels[j];
-            }
-            actualTemp = tempSum / ARRAY_SIZE;
+            actualTemp = (tempSum / ARRAY_SIZE) + TEMP_CORRECTION;
             batteryChargeStatus = battSum / ARRAY_SIZE; 
             LCD_ClearCommand();
             displayData();
             counter = 0;
         }
     }
-
     return -1;
-}
-
-void initializeADCExternalReferenceVoltage() {
-    // init port 14 to be digital output for generating
-    // temperature reference 
-    TRISBbits.TRISB14 = 0;
-    ANSBbits.ANSB14 = 0;
-    LATBbits.LATB14 = 0;
 }
 
 void initializeKeypadRowPins() {
