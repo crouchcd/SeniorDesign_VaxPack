@@ -30,6 +30,7 @@ bool isCursorInTensPlace = true;
                             should be as close to Vdd as possible */ 
 #define BAT_REF_LOW 2.6 // 0% battery charge level - look at Vscaled when supply is 14V
 #define TEMP_CORRECTION 3 // temp seems to be off by a few degrees
+#define BAT_CORRECTION 6 // battery reading is off by +5 to +7 degrees
 
 int main(void) {
     // initialize the device
@@ -40,7 +41,7 @@ int main(void) {
     float tempRef = TEMP_REF_HI - TEMP_REF_LOW;
     int ADCvalue = 0;
     float Vout = 0.0;
-    float batteryPercentage, batteryScaled;
+    float batteryScaled;
     short counter = 0;
     int temps[ARRAY_SIZE] = {0, 0, 0, 0, 0, 0, 0};
     int battLevels[ARRAY_SIZE] = {0, 0, 0, 0, 0, 0, 0};
@@ -58,9 +59,7 @@ int main(void) {
         SetADCForInternalReference();
         ADCvalue = ADC1_GetConversion(BATTERY_CHANNEL);
         batteryScaled = ADCvalue * (Vdd / 4095);
-        batteryPercentage = ((batteryScaled - BAT_REF_LOW) / (BAT_REF_HI - BAT_REF_LOW)) * 100;
-        if (batteryPercentage < 0) batteryPercentage = 0;
-        batteryChargeStatus = batteryPercentage;
+        batteryChargeStatus = ((batteryScaled - BAT_REF_LOW) / (BAT_REF_HI - BAT_REF_LOW)) * 100;
 
         if (counter < ARRAY_SIZE) {
             // add temp and battery readings to an array
@@ -78,7 +77,8 @@ int main(void) {
                 battSum += battLevels[i];
             }
             actualTemp = (tempSum / ARRAY_SIZE) + TEMP_CORRECTION;
-            batteryChargeStatus = battSum / ARRAY_SIZE; 
+            batteryChargeStatus = (battSum / ARRAY_SIZE) - BAT_CORRECTION;
+            if (batteryChargeStatus < 0) batteryChargeStatus = 0;
             LCD_ClearCommand();
             displayData();
             counter = 0;
