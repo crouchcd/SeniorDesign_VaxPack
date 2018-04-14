@@ -205,5 +205,5 @@ void displayData() {
 void errorMessage() {
     LCD_PrintString("Invalid Key");
     LCD_SetDisplayAddressCommand(0x0040);
-    LCD_PrintString("range: 32 - 42+F");
+    LCD_PrintString("range: 32 - 45+F");
 }
