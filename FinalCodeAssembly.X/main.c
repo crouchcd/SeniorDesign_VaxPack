@@ -31,6 +31,9 @@ bool isCursorInTensPlace = true;
 #define BAT_REF_LOW 2.6 // 0% battery charge level - look at Vscaled when supply is 14V
 #define TEMP_CORRECTION 3 // temp seems to be off by a few degrees
 #define BAT_CORRECTION 6 // battery reading is off by +5 to +7 degrees
+#define COOLING_RELAY LATBbits.LATB14
+#define TEC_RELAY LATBbits.LATB15
+#define COOLDOWN_TIME 1000
 
 int main(void) {
     // initialize the device
@@ -42,9 +45,11 @@ int main(void) {
     int ADCvalue = 0;
     float Vout = 0.0;
     float batteryScaled;
-    short counter = 0;
+    short arrayElemCounter = 0;
     int temps[ARRAY_SIZE] = {0, 0, 0, 0, 0, 0, 0};
     int battLevels[ARRAY_SIZE] = {0, 0, 0, 0, 0, 0, 0};
+    bool isTEC_off = true;
+    int cooldownTimer = 0;
 
     while (1) {
 
@@ -61,18 +66,21 @@ int main(void) {
         batteryScaled = ADCvalue * (Vdd / 4095);
         batteryChargeStatus = ((batteryScaled - BAT_REF_LOW) / (BAT_REF_HI - BAT_REF_LOW)) * 100;
 
-        /* if (isTEC_off) {
-         *  if (fanTimer > 10 minutes) {
-         *      LATBbits.LATB15 = 0;
-         * }
-         * }
-         */
+        // run the cool-down system for X number of seconds after the TEC turns off
+        if (isTEC_off) {
+            if (cooldownTimer > COOLDOWN_TIME) {
+                COOLING_RELAY = 0;
+            }
+            else {
+                cooldownTimer++;
+            }
+        }
 
-        if (counter < ARRAY_SIZE) {
+        if (arrayElemCounter < ARRAY_SIZE) {
             // add temp and battery readings to an array
-            temps[counter] = actualTemp;
-            battLevels[counter] = batteryChargeStatus;
-            counter++;
+            temps[arrayElemCounter] = actualTemp;
+            battLevels[arrayElemCounter] = batteryChargeStatus;
+            arrayElemCounter++;
             __delay_ms(100);
         } else {
             // average temperatures and bat. levels
@@ -86,21 +94,20 @@ int main(void) {
             batteryChargeStatus = (battSum / ARRAY_SIZE) - BAT_CORRECTION;
             if (batteryChargeStatus < 0) batteryChargeStatus = 0;
 
-            /* if (actualTemp > userDesiredTemp) {
-             *  LATBbits.LATB14 = 1;
-             *  LATBbits.LATB15 = 1;
-             *  isTEC_off = false;
-             *  fanTimer = 0;
-             * }
-             * else {
-             *  LATBbits.LATB14 = 0;
-             *  isTEC_off = true;
-             *  fanTimer.start()
-             * }
-             */
+            // determine whether to keep the TEC/Cooldown system on/off
+            if (actualTemp > userDesiredTemp) {
+                COOLING_RELAY = 1;
+                TEC_RELAY = 1;
+                isTEC_off = false;
+                cooldownTimer = 0;
+            } else {
+                TEC_RELAY = 0;
+                isTEC_off = true;
+                cooldownTimer = 1;
+            }
             LCD_ClearCommand();
             displayData();
-            counter = 0;
+            arrayElemCounter = 0;
         }
     }
     return -1;
