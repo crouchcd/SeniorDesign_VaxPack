@@ -32,7 +32,7 @@ bool isCursorInTensPlace = true;
 #define TEMP_CORRECTION 3 // temp seems to be off by a few degrees
 #define BAT_CORRECTION 6 // battery reading is off by +5 to +7 degrees
 #define COOLING_RELAY LATBbits.LATB14
-#define TEC_RELAY LATBbits.LATB15
+#define TEC_RELAY LATAbits.LATA7
 #define COOLDOWN_TIME 1000
 
 int main(void) {
@@ -50,6 +50,12 @@ int main(void) {
     int battLevels[ARRAY_SIZE] = {0, 0, 0, 0, 0, 0, 0};
     bool isTEC_off = true;
     int cooldownTimer = 0;
+    // initialize RA7 and RB14 for relays (RB15 pin is not connected)
+    TRISBbits.TRISB14 = 0;
+    ANSBbits.ANSB14 = 0;
+    TRISAbits.TRISA7 = 0;
+    COOLING_RELAY = 0;
+    TEC_RELAY = 0;
 
     while (1) {
 
@@ -67,14 +73,14 @@ int main(void) {
         batteryChargeStatus = ((batteryScaled - BAT_REF_LOW) / (BAT_REF_HI - BAT_REF_LOW)) * 100;
 
         // run the cool-down system for X number of seconds after the TEC turns off
-        if (isTEC_off) {
-            if (cooldownTimer > COOLDOWN_TIME) {
-                COOLING_RELAY = 0;
-            }
-            else {
-                cooldownTimer++;
-            }
-        }
+//        if (isTEC_off) {
+//            if (cooldownTimer > COOLDOWN_TIME) {
+//                COOLING_RELAY = 0;
+//            }
+//            else {
+//                cooldownTimer++;
+//            }
+//        }
 
         if (arrayElemCounter < ARRAY_SIZE) {
             // add temp and battery readings to an array
@@ -96,14 +102,14 @@ int main(void) {
 
             // determine whether to keep the TEC/Cooldown system on/off
             if (actualTemp > userDesiredTemp) {
-                COOLING_RELAY = 1;
-                TEC_RELAY = 1;
-                isTEC_off = false;
-                cooldownTimer = 0;
+//                COOLING_RELAY = 1;
+//                TEC_RELAY = 1;
+//                isTEC_off = false;
+//                cooldownTimer = 0;
             } else {
-                TEC_RELAY = 0;
-                isTEC_off = true;
-                cooldownTimer = 1;
+//                TEC_RELAY = 0;
+//                isTEC_off = true;
+//                cooldownTimer = 1;
             }
             LCD_ClearCommand();
             displayData();
