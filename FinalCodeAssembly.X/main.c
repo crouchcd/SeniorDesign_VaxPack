@@ -22,7 +22,7 @@ bool isCursorInTensPlace = true;
 #define BATTERY_CHANNEL 5 // RB3
 #define SetADCForExternalReference() AD1CON2 = 0x6000; // for temperature
 #define SetADCForInternalReference() AD1CON2 = 0x0000; // for battery level
-#define ARRAY_SIZE 7
+#define ARRAY_SIZE 15
 #define TEMP_REF_HI 1.75
 #define TEMP_REF_LOW 0.1
 #define Vdd 3.118
@@ -46,8 +46,8 @@ int main(void) {
     float Vout = 0.0;
     float batteryScaled;
     short arrayElemCounter = 0;
-    int temps[ARRAY_SIZE] = {0, 0, 0, 0, 0, 0, 0};
-    int battLevels[ARRAY_SIZE] = {0, 0, 0, 0, 0, 0, 0};
+    int temps[ARRAY_SIZE] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    int battLevels[ARRAY_SIZE] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
     bool isTEC_off = true;
     int cooldownTimer = 0;
     // initialize RA7 and RB14 for relays (RB15 pin is not connected)
@@ -76,8 +76,7 @@ int main(void) {
         if (isTEC_off) {
             if (cooldownTimer > COOLDOWN_TIME) {
                 COOLING_RELAY = 0;
-            }
-            else {
+            } else {
                 cooldownTimer++;
             }
         }
@@ -101,16 +100,22 @@ int main(void) {
             if (batteryChargeStatus < 0) batteryChargeStatus = 0;
 
             // determine whether to keep the TEC/Cooldown system on/off
-            if (actualTemp > userDesiredTemp) {
+            if (actualTemp >= (userDesiredTemp + 5)) {
+                // if actual temp gets 5 or more above target, power TEC and COOLING
                 COOLING_RELAY = 1;
                 TEC_RELAY = 1;
                 isTEC_off = false;
                 cooldownTimer = 0;
-            } else {
+            } else if (actualTemp <= (userDesiredTemp - 5)) {
+                // if actual temp gets 5 or less below target, cut TEC power
+                // ... and start the cool-down timer
                 TEC_RELAY = 0;
                 isTEC_off = true;
                 cooldownTimer = 1;
             }
+            // else {
+            // do nothing, leave TEC and COOLING systems on
+            // }
             LCD_ClearCommand();
             displayData();
             arrayElemCounter = 0;
