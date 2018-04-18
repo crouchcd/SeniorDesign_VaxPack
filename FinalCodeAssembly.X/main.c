@@ -75,7 +75,7 @@ int main(void) {
         // run the cool-down system for X number of seconds after the TEC turns off
         if (isTEC_off) {
             if (cooldownTimer > COOLDOWN_TIME) {
-                COOLING_RELAY = 0;
+                if (COOLING_RELAY == 1) COOLING_RELAY = 0;
             } else {
                 cooldownTimer++;
             }
@@ -102,16 +102,15 @@ int main(void) {
             // determine whether to keep the TEC/Cooldown system on/off
             if (actualTemp >= (userDesiredTemp + 5)) {
                 // if actual temp gets 5 or more above target, power TEC and COOLING
-                COOLING_RELAY = 1;
-                TEC_RELAY = 1;
+                if (COOLING_RELAY == 0) COOLING_RELAY = 1;
+                if (TEC_RELAY == 0) TEC_RELAY = 1;
                 isTEC_off = false;
                 cooldownTimer = 0;
             } else if (actualTemp <= (userDesiredTemp - 5)) {
                 // if actual temp gets 5 or less below target, cut TEC power
                 // ... and start the cool-down timer
-                TEC_RELAY = 0;
+                if (TEC_RELAY == 1) TEC_RELAY = 0;
                 isTEC_off = true;
-                cooldownTimer = 1;
             }
             // else {
             // do nothing, leave TEC and COOLING systems on
