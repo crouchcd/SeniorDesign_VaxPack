@@ -20,14 +20,18 @@ int main(void) {
     short arrayElemCounter = 0;
     int temps[ARRAY_SIZE] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
     int battLevels[ARRAY_SIZE] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-    bool isTEC_off = true;
-    int cooldownTimer = 0;
     initRelayTriggers();
     getTargetTemperature();
 
     while (1) {
         if (userTempSelected) {
+            
+            // once user temp is selected, never change the temp (unless program is reset)
+            EX_INT0_InterruptDisable();
+            EX_INT1_InterruptDisable();
+            EX_INT2_InterruptDisable();
             LCD_DisplayOptions(0x000C); //display on, underline off, blink off
+            
             SetADCForExternalReference();
             ADCvalue = ADC1_GetConversion(TEMPERATURE_CHANNEL);
             Vout = ADCvalue * (tempRef / 4095);
@@ -40,15 +44,6 @@ int main(void) {
             ADCvalue = ADC1_GetConversion(BATTERY_CHANNEL);
             batteryScaled = ADCvalue * (Vdd / 4095);
             batteryChargeStatus = ((batteryScaled - BAT_REF_LOW) / (BAT_REF_HI - BAT_REF_LOW)) * 100;
-
-            // run the cool-down system for X number of seconds after the TEC turns off
-            if (isTEC_off) {
-                if (cooldownTimer > COOLDOWN_TIME) {
-                    if (COOLING_RELAY == 1) COOLING_RELAY = 0;
-                } else {
-                    cooldownTimer++;
-                }
-            }
 
             if (arrayElemCounter < ARRAY_SIZE) {
                 // add temp and battery readings to an array
@@ -73,13 +68,10 @@ int main(void) {
                     // if actual temp gets 5 or more above target, power TEC and COOLING
                     if (COOLING_RELAY == 0) COOLING_RELAY = 1;
                     if (TEC_RELAY == 0) TEC_RELAY = 1;
-                    isTEC_off = false;
-                    cooldownTimer = 0;
                 } else if (actualTemp <= (userDesiredTemp - 5)) {
-                    // if actual temp gets 5 or less below target, cut TEC power
-                    // ... and start the cool-down timer
+                    // if actual temp gets 5 or less below target, cut TEC/Cooling power
+                    if (COOLING_RELAY == 1) COOLING_RELAY = 0;
                     if (TEC_RELAY == 1) TEC_RELAY = 0;
-                    isTEC_off = true;
                 }
                 // else {
                 // do nothing, leave TEC and COOLING systems on
