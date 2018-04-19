@@ -21,18 +21,15 @@ void LCD_ClearCommand() {
     __delay_ms(1);
 }
 
-//address can only be a number between $20 - $2F OR $40 - $4F
+//address can only be a number between $00 - $0F OR $40 - $4F
 
 void LCD_SetDisplayAddressCommand(int address) {
     /*
      * This function clears the RC8 bit for Command Mode & Sets E (RC9)
      * RC7 must be set; RC0 - RC6 is used to set the address to a value between
-     * $20-2F OR $40-$4F
-     * @param: address: must be between $20-2F or $40-4F
+     * $00-0F OR $40-$4F
+     * @param: address: must be between $00-0F or $40-4F
      */
-
-    if (0x0020 > address || address > 0x004F)
-        return;
 
     LATC = address; // sets the LCD display address
     LATC |= 0x0280; // 0000 0010 1000 0000 Required configuration

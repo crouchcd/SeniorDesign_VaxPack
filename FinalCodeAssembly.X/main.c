@@ -126,6 +126,9 @@ int main(void) {
 
 void getTargetTemperature() {
     LCD_DisplayOptions(0x000F); // everything on
+    LCD_SetDisplayAddressCommand(0x0040);
+    LCD_PrintString("(32 to 45+F)");
+    LCD_SetDisplayAddressCommand(0x0000);
     LCD_PrintString("Enter Temp: ");
 }
 
@@ -182,7 +185,7 @@ void updateDisplayAfterKeypress(char keypress) {
             if (isUpdateSuccessful) {
                 // if not a completely valid temp, output the first value
                 if (!userTempSelected) LCD_PrintInteger(userDesiredTemp);
-                // if a valid temp, output the one's place
+                    // if a valid temp, output the one's place
                 else LCD_PrintInteger(keyValue);
             }
 
