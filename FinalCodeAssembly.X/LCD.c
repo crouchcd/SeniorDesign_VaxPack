@@ -47,15 +47,25 @@ void LCD_Init() {
      * documentation for the listing of commands
      */
 
-    //display on command
-    LATC = 0x020F; // 0000 0010 0000 1111
-    __delay_ms(1);
-    LATCbits.LATC9 = 0; // toggle E pin
-    __delay_ms(1);
+    //display on command, underline cursor, blink cursor
+    LCD_DisplayOptions(0x000F); // ... 0000 1111
 
     //set function command
     LATC = 0x023F; // 0000 0010 0011 1111
     __delay_ms(1);
+    LATCbits.LATC9 = 0; // toggle E pin
+    __delay_ms(1);
+}
+
+void LCD_DisplayOptions(int options) {
+    /*
+     * With RS - RC8 and E - RC9 - 
+     * @param: options declares the display/cursor options must be between
+     * x08 and x0F
+     */
+    if (options < 0x0008 || options > 0x000F) return;
+    LATC = 0x0200 | options; // 0000 0010 0000 1DUB
+     __delay_ms(1);
     LATCbits.LATC9 = 0; // toggle E pin
     __delay_ms(1);
 }
