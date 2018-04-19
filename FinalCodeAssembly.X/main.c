@@ -12,6 +12,7 @@ bool updateOnesPlace(int keyValue);
 void displayData();
 void errorMessage();
 void initializeKeypadRowPins();
+void initRelayTriggers();
 
 int actualTemp = 36;
 int batteryChargeStatus = 56;
@@ -33,7 +34,7 @@ bool isCursorInTensPlace = true;
 #define BAT_CORRECTION 0 // off by +5 to +7 degrees (power suppply) (0 for battery)
 #define COOLING_RELAY LATBbits.LATB14
 #define TEC_RELAY LATAbits.LATA7
-#define COOLDOWN_TIME 10000
+#define COOLDOWN_TIME 500 // approx 1.50 seconds
 
 int main(void) {
     // initialize the device
@@ -50,12 +51,7 @@ int main(void) {
     int battLevels[ARRAY_SIZE] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
     bool isTEC_off = true;
     int cooldownTimer = 0;
-    // initialize RA7 and RB14 for relays (RB15 pin is not connected)
-    TRISBbits.TRISB14 = 0;
-    ANSBbits.ANSB14 = 0;
-    TRISAbits.TRISA7 = 0;
-    COOLING_RELAY = 0;
-    TEC_RELAY = 0;
+    initRelayTriggers();
 
     while (1) {
 
@@ -99,7 +95,7 @@ int main(void) {
             batteryChargeStatus = (battSum / ARRAY_SIZE) - BAT_CORRECTION;
             if (batteryChargeStatus < 0) batteryChargeStatus = 0;
 
-            // determine whether to keep the TEC/Cooldown system on/off
+            // determine whether to keep the TEC/Cool-down system on/off
             if (actualTemp >= (userDesiredTemp + 5)) {
                 // if actual temp gets 5 or more above target, power TEC and COOLING
                 if (COOLING_RELAY == 0) COOLING_RELAY = 1;
@@ -123,6 +119,15 @@ int main(void) {
     return -1;
 }
 
+void initRelayTriggers() {
+    // initialize RA7 and RB14 for relays (RB15 pin has a bad connection)
+    TRISBbits.TRISB14 = 0; // for Cool-down
+    ANSBbits.ANSB14 = 0;
+    TRISAbits.TRISA7 = 0; // for TEC
+    COOLING_RELAY = 0; 
+    TEC_RELAY = 0;
+}
+
 void initializeKeypadRowPins() {
 
     /*
@@ -142,7 +147,6 @@ void initializeKeypadRowPins() {
 void updateDisplayAfterKeypress(char keypress) {
     // convert char to int
     int keyValue = keypress - '0';
-    LCD_ClearCommand();
 
     if (keyValue >= 0 && keyValue <= 9) {
         bool isUpdateSuccessful = false;
@@ -158,18 +162,19 @@ void updateDisplayAfterKeypress(char keypress) {
         if (isUpdateSuccessful) {
             // move cursor position
             isCursorInTensPlace = !isCursorInTensPlace;
+            LCD_ClearCommand();
             displayData();
         }
 
     } else {
-        errorMessage();
+//        errorMessage();
     }
 }
 
 bool updateTensPlace(int keyValue) {
     bool isUpdateSuccessful = false;
     if (keyValue > 4 || keyValue < 3) {
-        errorMessage();
+//        errorMessage();
     } else {
         int onesPlace = userDesiredTemp % 10;
         if ((keyValue == 4 && onesPlace > 2) || (keyValue == 3 && onesPlace < 2)) {
@@ -186,9 +191,9 @@ bool updateTensPlace(int keyValue) {
 bool updateOnesPlace(int keyValue) {
     bool isUpdateSuccessful = false;
     if ((userDesiredTemp / 10) == 3 && keyValue < 2) {
-        errorMessage();
+//        errorMessage();
     } else if ((userDesiredTemp / 10) == 4 && keyValue > 5) {
-        errorMessage();
+//        errorMessage();
     } else {
         userDesiredTemp = (userDesiredTemp / 10) * 10; // e.g. 32 => 30
         userDesiredTemp = userDesiredTemp + keyValue;
